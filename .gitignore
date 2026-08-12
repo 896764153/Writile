@@ -1,0 +1,4 @@
+installer_output/Writile-Setup-1.0.0.exe
+dist/Writile.exe
+build/*
+build/*/*

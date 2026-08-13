@@ -29,6 +29,7 @@ jobs:
           cache: 'pip'
 
       # 3. 安装 Linux 系统依赖 (PyQt6-WebEngine 需要)
+      # 注意: ubuntu-24.04 上部分库改名为 *t64 后缀
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
         run: |
@@ -37,9 +38,12 @@ jobs:
             libgl1 libegl1 libglib2.0-0 libfontconfig1 libdbus-1-3 \
             libxkbcommon0 libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 \
             libcups2 libdrm2 libxcomposite1 libxdamage1 libxrandr2 \
-            libgbm1 libasound2 libxrender1 libpulse0 \
-            libfuse2 \
+            libgbm1 libxrender1 libpulse0 \
             desktop-file-utils
+          # t64 包名兼容 (Ubuntu 24.04)
+          sudo apt-get install -y libasound2t64 libfuse2t64 2>/dev/null \
+            || sudo apt-get install -y libasound2 libfuse2 2>/dev/null \
+            || true
 
       # 4. 安装 Python 依赖
       - name: Install Python dependencies
@@ -129,6 +133,27 @@ jobs:
           if-no-files-found: warn
 
       # ==================== macOS ====================
+      - name: Generate macOS .icns icon
+        if: runner.os == 'macOS'
+        run: |
+          set -e
+          mkdir -p icon.iconset
+          sips -z 16 16     icon.png --out icon.iconset/icon_16x16.png
+          sips -z 32 32     icon.png --out icon.iconset/icon_16x16@2x.png
+          sips -z 32 32     icon.png --out icon.iconset/icon_32x32.png
+          sips -z 64 64     icon.png --out icon.iconset/icon_32x32@2x.png
+          sips -z 128 128   icon.png --out icon.iconset/icon_128x128.png
+          sips -z 256 256   icon.png --out icon.iconset/icon_128x128@2x.png
+          sips -z 256 256   icon.png --out icon.iconset/icon_256x256.png
+          sips -z 512 512   icon.png --out icon.iconset/icon_256x256@2x.png
+          sips -z 512 512   icon.png --out icon.iconset/icon_512x512.png
+          sips -z 1024 1024 icon.png --out icon.iconset/icon_512x512@2x.png
+          iconutil -c icns icon.iconset -o icon.icns
+          ls -la icon.icns
+          # 将 spec 中的 icon.png 替换为 icon.icns
+          sed -i '' "s/icon='icon.png'/icon='icon.icns'/g" build_macos.spec
+          sed -i '' "s/'icon.png'/'icon.icns'/g" build_macos.spec
+
       - name: Build macOS app
         if: runner.os == 'macOS'
         run: python -m PyInstaller build_macos.spec --noconfirm --clean

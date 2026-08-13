@@ -1,0 +1,194 @@
+name: Build Writile
+
+# 触发条件：推送 v* 开头的 tag 时构建并发布 Release
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false  # 单平台失败不影响其他平台
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    steps:
+      # 1. 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. 设置 Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # 3. 安装 Linux 系统依赖 (PyQt6-WebEngine 需要)
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgl1 libegl1 libglib2.0-0 libfontconfig1 libdbus-1-3 \
+            libxkbcommon0 libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 \
+            libcups2 libdrm2 libxcomposite1 libxdamage1 libxrandr2 \
+            libgbm1 libasound2 libxrender1 libpulse0 \
+            libfuse2 \
+            desktop-file-utils
+
+      # 4. 安装 Python 依赖
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 5. 生成图标
+      - name: Generate icon
+        run: python gen_icon.py
+
+      # ==================== Windows ====================
+      - name: Build Windows (single exe)
+        if: runner.os == 'Windows'
+        run: python -m PyInstaller build.spec --noconfirm --clean
+
+      - name: Install Inno Setup
+        if: runner.os == 'Windows'
+        run: choco install innosetup -y --no-progress
+
+      - name: Build Windows installer
+        if: runner.os == 'Windows'
+        run: iscc installer.iss
+        shell: pwsh
+
+      - name: Upload Windows artifacts
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Writile-windows
+          path: |
+            dist/Writile.exe
+            installer_output/Writile-Setup-*.exe
+          if-no-files-found: error
+
+      # ==================== Linux ====================
+      - name: Build Linux executable
+        if: runner.os == 'Linux'
+        run: python -m PyInstaller build_linux.spec --noconfirm --clean
+
+      - name: Create AppImage
+        if: runner.os == 'Linux'
+        run: |
+          set -e
+          APP_DIR="dist/Writile.AppDir"
+          mkdir -p "${APP_DIR}/usr/bin"
+          mkdir -p "${APP_DIR}/usr/share/icons/hicolor/256x256/apps"
+          mkdir -p "${APP_DIR}/usr/share/applications"
+
+          # 复制可执行文件和图标
+          cp dist/Writile "${APP_DIR}/usr/bin/Writile"
+          cp dist/Writile "${APP_DIR}/Writile"
+          chmod +x "${APP_DIR}/Writile"
+          cp icon.png "${APP_DIR}/usr/share/icons/hicolor/256x256/apps/writile.png"
+          cp icon.png "${APP_DIR}/writile.png"
+
+          # 创建 .desktop 文件 (文件名须与根目录可执行文件名一致)
+          cat > "${APP_DIR}/Writile.desktop" << 'EOF'
+          [Desktop Entry]
+          Name=Writile
+          Comment=Typora-style Markdown editor
+          Exec=Writile %f
+          Icon=writile
+          Type=Application
+          Categories=TextEditor;Office;
+          MimeType=text/markdown;text/x-markdown;
+          Terminal=false
+          StartupWMClass=Writile
+          EOF
+          cp "${APP_DIR}/Writile.desktop" "${APP_DIR}/usr/share/applications/"
+
+          # 下载 appimagetool
+          wget -q "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O appimagetool
+          chmod +x appimagetool
+
+          # 构建 AppImage (使用 extract-and-run 规避 FUSE 在 CI 中受限)
+          ARCH=x86_64 ./appimagetool "${APP_DIR}" "dist/Writile-x86_64.AppImage" --appimage-extract-and-run
+
+      - name: Upload Linux artifacts
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Writile-linux
+          path: |
+            dist/Writile
+            dist/Writile-x86_64.AppImage
+          if-no-files-found: warn
+
+      # ==================== macOS ====================
+      - name: Build macOS app
+        if: runner.os == 'macOS'
+        run: python -m PyInstaller build_macos.spec --noconfirm --clean
+
+      - name: Create DMG
+        if: runner.os == 'macOS'
+        run: |
+          hdiutil create -volname "Writile" \
+            -srcfolder "dist/Writile.app" \
+            -ov -format UDZO \
+            "dist/Writile-macOS.dmg"
+
+      - name: Upload macOS artifacts
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Writile-macos
+          path: |
+            dist/Writile.app
+            dist/Writile-macOS.dmg
+          if-no-files-found: error
+
+  # ==================== 发布 Release ====================
+  release:
+    name: Publish Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 需要写权限来创建 Release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 下载所有平台的 artifacts
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      # 整理目录结构，便于上传
+      - name: Organize release files
+        run: |
+          mkdir -p release
+          # Windows
+          cp artifacts/Writile-windows/dist/Writile.exe release/Writile-Windows-x64.exe 2>/dev/null || true
+          cp artifacts/Writile-windows/installer_output/Writile-Setup-*.exe release/ 2>/dev/null || true
+          # Linux
+          cp artifacts/Writile-linux/dist/Writile-x86_64.AppImage release/Writile-Linux-x86_64.AppImage 2>/dev/null || true
+          # macOS
+          cp artifacts/Writile-macos/dist/Writile-macOS.dmg release/Writile-macOS.dmg 2>/dev/null || true
+          ls -la release/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Writile ${{ github.ref_name }}
+          generate_release_notes: true  # 自动生成 changelog
+          draft: false
+          prerelease: false
+          files: release/*

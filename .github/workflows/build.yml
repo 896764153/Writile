@@ -180,40 +180,55 @@ jobs:
   release:
     name: Publish Release
     needs: build
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') && needs.build.result == 'success'
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # 需要写权限来创建 Release
+      contents: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 下载所有平台的 artifacts
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
 
-      # 整理目录结构，便于上传
+      - name: Verify all artifacts exist
+        run: |
+          set -e
+          echo "=== 检查 Windows ==="
+          test -f artifacts/Writile-windows/dist/Writile.exe || { echo "缺少 Windows exe!"; exit 1; }
+          echo "  ✓ Writile.exe"
+          ls artifacts/Writile-windows/installer_output/Writile-Setup-*.exe
+          echo "=== 检查 Linux ==="
+          test -f artifacts/Writile-linux/dist/Writile-x86_64.AppImage || { echo "缺少 Linux AppImage!"; exit 1; }
+          echo "  ✓ AppImage"
+          echo "=== 检查 macOS ==="
+          test -f artifacts/Writile-macos/dist/Writile-macOS.dmg || { echo "缺少 macOS DMG!"; exit 1; }
+          echo "  ✓ DMG"
+          echo ""
+          echo "所有平台产物已就绪!"
+
       - name: Organize release files
         run: |
           mkdir -p release
           # Windows
-          cp artifacts/Writile-windows/dist/Writile.exe release/Writile-Windows-x64.exe 2>/dev/null || true
-          cp artifacts/Writile-windows/installer_output/Writile-Setup-*.exe release/ 2>/dev/null || true
+          cp artifacts/Writile-windows/dist/Writile.exe release/Writile-Windows-x64.exe
+          cp artifacts/Writile-windows/installer_output/Writile-Setup-*.exe release/
           # Linux
-          cp artifacts/Writile-linux/dist/Writile-x86_64.AppImage release/Writile-Linux-x86_64.AppImage 2>/dev/null || true
+          cp artifacts/Writile-linux/dist/Writile-x86_64.AppImage release/Writile-Linux-x86_64.AppImage
           # macOS
-          cp artifacts/Writile-macos/dist/Writile-macOS.dmg release/Writile-macOS.dmg 2>/dev/null || true
-          ls -la release/
+          cp artifacts/Writile-macos/dist/Writile-macOS.dmg release/Writile-macOS.dmg
+          echo "=== Release 产物 ==="
+          ls -lh release/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Writile ${{ github.ref_name }}
-          generate_release_notes: true  # 自动生成 changelog
+          generate_release_notes: true
           draft: false
           prerelease: false
           files: release/*

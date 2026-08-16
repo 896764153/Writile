@@ -1,0 +1,207 @@
+============================================================
+Writile - Build .exe
+============================================================
+
+Log: D:\project\ai agent\xuexi\Writile\build.log
+
+[1/5] Checking Python environment...
+Python 3.14.6
+Python 3.14.6
+
+[2/5] Upgrading pip...
+Looking in indexes: https://pypi.tuna.tsinghua.edu.cn/simple
+Requirement already satisfied: pip in C:\Users\chengjinsong\AppData\Local\Programs\Python\Python314\Lib\site-packages (26.2.1)
+
+204 INFO: PyInstaller: 6.22.0, contrib hooks: 2026.6
+205 INFO: Python: 3.14.6
+236 INFO: Platform: Windows-10-10.0.19045-SP0
+237 INFO: Python environment: C:\Users\chengjinsong\AppData\Local\Programs\Python\Python314
+240 INFO: Removing temporary files and cleaning cache in C:\Users\chengjinsong\AppData\Local\pyinstaller
+259 INFO: Module search paths (PYTHONPATH):
+['D:\\project\\ai agent\\xuexi\\Writile',
+ 'C:\\Users\\chengjinsong\\AppData\\Local\\Programs\\Python\\Python314\\python314.zip',
+ 'C:\\Users\\chengjinsong\\AppData\\Local\\Programs\\Python\\Python314\\DLLs',
+ 'C:\\Users\\chengjinsong\\AppData\\Local\\Programs\\Python\\Python314\\Lib',
+ 'C:\\Users\\chengjinsong\\AppData\\Local\\Programs\\Python\\Python314',
+ 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages',
+ 'C:\\Users\\chengjinsong\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages',
+ 'D:\\project\\ai agent\\xuexi\\Writile']
+776 INFO: Appending 'datas' from .spec
+776 INFO: checking Analysis
+776 INFO: Building Analysis because Analysis-00.toc is non existent
+776 INFO: Looking for Python shared library...
+776 INFO: Using Python shared library: C:\Users\chengjinsong\AppData\Local\Programs\Python\Python314\python314.dll
+777 INFO: Running Analysis Analysis-00.toc
+777 INFO: Target bytecode optimization level: 0
+777 INFO: Initializing module dependency graph...
+778 INFO: Initializing module graph hook caches...
+795 INFO: Analyzing modules for base_library.zip ...
+2156 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+4262 INFO: Processing standard module hook 'hook-math.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+7130 INFO: Processing standard module hook 'hook-difflib.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+7163 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+8094 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+10725 INFO: Caching module dependency graph...
+10791 INFO: Analyzing D:\project\ai agent\xuexi\Writile\md_editor.py
+11067 INFO: Processing standard module hook 'hook-PyQt6.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+13560 INFO: Processing standard module hook 'hook-PyQt6.QtWidgets.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+18465 INFO: Processing standard module hook 'hook-PyQt6.QtCore.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+25190 INFO: Processing standard module hook 'hook-PyQt6.QtGui.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+47811 INFO: Processing standard module hook 'hook-PyQt6.QtWebEngineWidgets.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+48977 INFO: Processing standard module hook 'hook-PyQt6.QtNetwork.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+51816 INFO: Processing standard module hook 'hook-PyQt6.QtPrintSupport.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+52531 INFO: Processing standard module hook 'hook-PyQt6.QtWebChannel.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+53278 INFO: Processing standard module hook 'hook-PyQt6.QtWebEngineCore.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+55653 INFO: Processing module hooks (post-graph stage)...
+55844 INFO: Processing standard module hook 'hook-PyQt6.QtPositioning.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+57135 INFO: Processing standard module hook 'hook-PyQt6.QtQuick.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+58016 INFO: Processing standard module hook 'hook-PyQt6.QtQml.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+72013 INFO: Processing standard module hook 'hook-PyQt6.QtOpenGL.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+72984 INFO: Processing standard module hook 'hook-PyQt6.QtQuickWidgets.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+73447 INFO: Performing binary vs. data reclassification (1591 entries)
+73707 INFO: Looking for ctypes DLLs
+73713 INFO: Analyzing run-time hooks ...
+73713 INFO: Including run-time hook 'pyi_rth_pyqt6.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\rthooks'
+73717 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+73720 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+73725 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\rthooks'
+73729 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\rthooks'
+73790 INFO: Creating base_library.zip...
+73814 INFO: Looking for dynamic libraries
+74018 INFO: Extra DLL search directories (AddDllDirectory): ['C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyQt6\\Qt6\\bin']
+74018 INFO: Extra DLL search directories (PATH): ['C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyQt6\\Qt6\\bin']
+77619 INFO: Warnings written to D:\project\ai agent\xuexi\Writile\build\build\warn-build.txt
+77644 INFO: Graph cross-reference written to D:\project\ai agent\xuexi\Writile\build\build\xref-build.html
+77732 INFO: checking PYZ
+77733 INFO: Building PYZ because PYZ-00.toc is non existent
+77733 INFO: Building PYZ (ZlibArchive) D:\project\ai agent\xuexi\Writile\build\build\PYZ-00.pyz
+77864 INFO: Building PYZ (ZlibArchive) D:\project\ai agent\xuexi\Writile\build\build\PYZ-00.pyz completed successfully.
+77915 INFO: checking PKG
+77916 INFO: Building PKG because PKG-00.toc is non existent
+77916 INFO: Building PKG (CArchive) Writile.pkg
+103459 INFO: Building PKG (CArchive) Writile.pkg completed successfully.
+103526 INFO: Bootloader C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+103526 INFO: checking EXE
+103526 INFO: Building EXE because EXE-00.toc is non existent
+103526 INFO: Building EXE from EXE-00.toc
+103541 INFO: Copying bootloader EXE to D:\project\ai agent\xuexi\Writile\dist\Writile.exe
+103623 INFO: Copying icon to EXE
+103681 INFO: Copying 0 resources to EXE
+103681 INFO: Embedding manifest in EXE
+103737 INFO: Appending PKG archive to EXE
+103895 INFO: Fixing EXE headers
+107857 INFO: Building EXE from EXE-00.toc completed successfully.
+107918 INFO: Build complete! The results are available in: D:\project\ai agent\xuexi\Writile\dist
+
+============================================================
+Build SUCCESS
+Output: D:\project\ai agent\xuexi\Writile\dist\Writile.exe
+Log  : D:\project\ai agent\xuexi\Writile\build.log
+============================================================
+
+Looking in indexes: https://pypi.tuna.tsinghua.edu.cn/simple
+Requirement already satisfied: PyQt6>=6.6.0 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from -r requirements.txt (line 1)) (6.11.0)
+Requirement already satisfied: PyQt6-WebEngine>=6.6.0 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from -r requirements.txt (line 2)) (6.11.0)
+Requirement already satisfied: pyinstaller>=6.0 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from -r requirements.txt (line 3)) (6.22.0)
+Requirement already satisfied: PyQt6-sip<14,>=13.8 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from PyQt6>=6.6.0->-r requirements.txt (line 1)) (13.12.0)
+Requirement already satisfied: PyQt6-Qt6<6.12.0,>=6.11.0 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from PyQt6>=6.6.0->-r requirements.txt (line 1)) (6.11.1)
+Requirement already satisfied: PyQt6-WebEngine-Qt6<6.12.0,>=6.11.0 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from PyQt6-WebEngine>=6.6.0->-r requirements.txt (line 2)) (6.11.1)
+Requirement already satisfied: altgraph in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from pyinstaller>=6.0->-r requirements.txt (line 3)) (0.17.5)
+Requirement already satisfied: packaging>=22.0 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from pyinstaller>=6.0->-r requirements.txt (line 3)) (26.2)
+Requirement already satisfied: pefile>=2022.5.30 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from pyinstaller>=6.0->-r requirements.txt (line 3)) (2024.8.26)
+Requirement already satisfied: pyinstaller-hooks-contrib>=2026.6 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from pyinstaller>=6.0->-r requirements.txt (line 3)) (2026.6)
+Requirement already satisfied: pywin32-ctypes>=0.2.1 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from pyinstaller>=6.0->-r requirements.txt (line 3)) (0.2.3)
+Requirement already satisfied: setuptools>=42.0.0 in C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages (from pyinstaller>=6.0->-r requirements.txt (line 3)) (84.0.0)
+Action: Close Explorer windows showing "D:\project\ai agent\xuexi\Writile\dist" then retry.
+[4/5] Cleaning old build files...
+错误: 没有找到进程 "Writile.exe"。
+
+[5/5] Building executable... (This may take a few minutes
+
+192 INFO: PyInstaller: 6.22.0, contrib hooks: 2026.6
+192 INFO: Python: 3.14.6
+226 INFO: Platform: Windows-10-10.0.19045-SP0
+226 INFO: Python environment: C:\Users\chengjinsong\AppData\Local\Programs\Python\Python314
+228 INFO: Removing temporary files and cleaning cache in C:\Users\chengjinsong\AppData\Local\pyinstaller
+230 INFO: Module search paths (PYTHONPATH):
+['D:\\project\\ai agent\\xuexi\\Writile',
+ 'C:\\Users\\chengjinsong\\AppData\\Local\\Programs\\Python\\Python314\\python314.zip',
+ 'C:\\Users\\chengjinsong\\AppData\\Local\\Programs\\Python\\Python314\\DLLs',
+ 'C:\\Users\\chengjinsong\\AppData\\Local\\Programs\\Python\\Python314\\Lib',
+ 'C:\\Users\\chengjinsong\\AppData\\Local\\Programs\\Python\\Python314',
+ 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages',
+ 'C:\\Users\\chengjinsong\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages',
+ 'D:\\project\\ai agent\\xuexi\\Writile']
+846 INFO: Appending 'datas' from .spec
+846 INFO: checking Analysis
+846 INFO: Building Analysis because Analysis-00.toc is non existent
+846 INFO: Looking for Python shared library...
+846 INFO: Using Python shared library: C:\Users\chengjinsong\AppData\Local\Programs\Python\Python314\python314.dll
+846 INFO: Running Analysis Analysis-00.toc
+847 INFO: Target bytecode optimization level: 0
+847 INFO: Initializing module dependency graph...
+848 INFO: Initializing module graph hook caches...
+875 INFO: Analyzing modules for base_library.zip ...
+2539 INFO: Processing standard module hook 'hook-math.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+2565 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+4093 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+5102 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+5870 INFO: Processing standard module hook 'hook-difflib.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+12227 INFO: Caching module dependency graph...
+12296 INFO: Analyzing D:\project\ai agent\xuexi\Writile\md_editor.py
+12614 INFO: Processing standard module hook 'hook-PyQt6.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+15070 INFO: Processing standard module hook 'hook-PyQt6.QtWidgets.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+20059 INFO: Processing standard module hook 'hook-PyQt6.QtCore.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+26879 INFO: Processing standard module hook 'hook-PyQt6.QtGui.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+51633 INFO: Processing standard module hook 'hook-PyQt6.QtWebEngineWidgets.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+53044 INFO: Processing standard module hook 'hook-PyQt6.QtNetwork.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+56208 INFO: Processing standard module hook 'hook-PyQt6.QtPrintSupport.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+57115 INFO: Processing standard module hook 'hook-PyQt6.QtWebChannel.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+58040 INFO: Processing standard module hook 'hook-PyQt6.QtWebEngineCore.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+60901 INFO: Processing module hooks (post-graph stage)...
+61270 INFO: Processing standard module hook 'hook-PyQt6.QtPositioning.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+62879 INFO: Processing standard module hook 'hook-PyQt6.QtQuick.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+64101 INFO: Processing standard module hook 'hook-PyQt6.QtQml.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+79249 INFO: Processing standard module hook 'hook-PyQt6.QtOpenGL.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+80257 INFO: Processing standard module hook 'hook-PyQt6.QtQuickWidgets.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+80803 INFO: Performing binary vs. data reclassification (1591 entries)
+81115 INFO: Looking for ctypes DLLs
+81127 INFO: Analyzing run-time hooks ...
+81129 INFO: Including run-time hook 'pyi_rth_pyqt6.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\rthooks'
+81134 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+81136 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks'
+81142 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\rthooks'
+81147 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyInstaller\\hooks\\rthooks'
+81219 INFO: Creating base_library.zip...
+81247 INFO: Looking for dynamic libraries
+81471 INFO: Extra DLL search directories (AddDllDirectory): ['C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyQt6\\Qt6\\bin']
+81471 INFO: Extra DLL search directories (PATH): ['C:\\Users\\chengjinsong\\AppData\\Roaming\\Python\\Python314\\site-packages\\PyQt6\\Qt6\\bin']
+85176 INFO: Warnings written to D:\project\ai agent\xuexi\Writile\build\build\warn-build.txt
+85206 INFO: Graph cross-reference written to D:\project\ai agent\xuexi\Writile\build\build\xref-build.html
+85299 INFO: checking PYZ
+85299 INFO: Building PYZ because PYZ-00.toc is non existent
+85299 INFO: Building PYZ (ZlibArchive) D:\project\ai agent\xuexi\Writile\build\build\PYZ-00.pyz
+85462 INFO: Building PYZ (ZlibArchive) D:\project\ai agent\xuexi\Writile\build\build\PYZ-00.pyz completed successfully.
+85521 INFO: checking PKG
+85521 INFO: Building PKG because PKG-00.toc is non existent
+85521 INFO: Building PKG (CArchive) Writile.pkg
+112103 INFO: Building PKG (CArchive) Writile.pkg completed successfully.
+112189 INFO: Bootloader C:\Users\chengjinsong\AppData\Roaming\Python\Python314\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+112189 INFO: checking EXE
+112189 INFO: Building EXE because EXE-00.toc is non existent
+112189 INFO: Building EXE from EXE-00.toc
+112189 INFO: Copying bootloader EXE to D:\project\ai agent\xuexi\Writile\dist\Writile.exe
+112322 INFO: Copying icon to EXE
+112414 INFO: Copying 0 resources to EXE
+112414 INFO: Embedding manifest in EXE
+112472 INFO: Appending PKG archive to EXE
+112634 INFO: Fixing EXE headers
+116479 INFO: Building EXE from EXE-00.toc completed successfully.
+116565 INFO: Build complete! The results are available in: D:\project\ai agent\xuexi\Writile\dist
+
+============================================================
+Build SUCCESS
+Output: D:\project\ai agent\xuexi\Writile\dist\Writile.exe
+Log  : D:\project\ai agent\xuexi\Writile\build.log
+============================================================
+

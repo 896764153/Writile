@@ -1,0 +1,161 @@
+============================================================
+Writile - Build Installer
+============================================================
+
+Option 2 - chocolatey:
+choco install innosetup
+Option 3 - manual download:
+https://jrsoftware.org/isdl.php
+
+After installing, re-run build_installer.bat to produce the Setup package.
+
+
+[Step 1/4] Generating icon...
+OK! Icon generated: D:\project\ai agent\xuexi\Writile\icon.ico
+Size: 29890 bytes
+PNG: D:\project\ai agent\xuexi\Writile\icon.png (15187 bytes)
+choco install innosetup
+Option 3 - manual download:
+https://jrsoftware.org/isdl.php
+
+After installing, re-run build_installer.bat to produce the Setup package.
+
+[Step 2/4] Building Writile.exe
+------------------------------------------------------------
+============================================================
+Writile - Build .exe
+============================================================
+
+Log: D:\project\ai agent\xuexi\Writile\build.log
+
+[1/5] Checking Python environment...
+Python 3.14.6
+
+[2/5] Upgrading pip...
+
+
+============================================================
+Build SUCCESS
+Output: D:\project\ai agent\xuexi\Writile\dist\Writile.exe
+Log  : D:\project\ai agent\xuexi\Writile\build.log
+============================================================
+
+Action: Close Explorer windows showing "D:\project\ai agent\xuexi\Writile\dist" then retry.
+[4/5] Cleaning old build files...
+
+[5/5] Building executable... (This may take a few minutes)
+
+
+============================================================
+Build SUCCESS
+Output: D:\project\ai agent\xuexi\Writile\dist\Writile.exe
+Log  : D:\project\ai agent\xuexi\Writile\build.log
+============================================================
+
+
+[Step 3/4] Checking Inno Setup...
+Found Inno Setup: "D:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+
+[Step 4/4] Building installer...
+Inno Setup 6 Command-Line Compiler
+Copyright (C) 1997-2026 Jordan Russell. All rights reserved.
+Portions Copyright (C) 2000-2026 Martijn Laan. All rights reserved.
+Portions Copyright (C) 2001-2004 Alex Yackimoff. All rights reserved.
+https://www.innosetup.com
+
+Compiler engine version: Inno Setup 6.7.3
+Non-commercial use only
+
+Preprocessing
+   Reading file: D:\Program Files (x86)\Inno Setup 6\ISPPBuiltins.iss
+Parsing [Setup] section, line 13
+Parsing [Setup] section, line 14
+Parsing [Setup] section, line 15
+Parsing [Setup] section, line 16
+Parsing [Setup] section, line 17
+Parsing [Setup] section, line 18
+Parsing [Setup] section, line 19
+Parsing [Setup] section, line 20
+Parsing [Setup] section, line 21
+Parsing [Setup] section, line 22
+Parsing [Setup] section, line 23
+Parsing [Setup] section, line 24
+Parsing [Setup] section, line 25
+Parsing [Setup] section, line 26
+Parsing [Setup] section, line 27
+Parsing [Setup] section, line 28
+Parsing [Setup] section, line 29
+Parsing [Setup] section, line 30
+Parsing [Setup] section, line 31
+Parsing [Setup] section, line 32
+Parsing [Setup] section, line 33
+Parsing [Setup] section, line 35
+Parsing [Setup] section, line 37
+Parsing [Setup] section, line 39
+Parsing [Setup] section, line 41
+Reading file (WizardImageFile)
+Reading file (WizardSmallImageFile)
+Preparing Setup program executable
+   Verification successful
+   Updating icons (Setup.e32)
+   Updating version info (Setup.e32)
+Determining language code pages
+Parsing [Languages] section, line 44
+   Reading file: D:\Program Files (x86)\Inno Setup 6\Default.isl
+   Messages in script file
+Reading default messages from Default.isl
+Parsing [Languages] section, line 44
+   Reading file: D:\Program Files (x86)\Inno Setup 6\Default.isl
+Parsing [LangOptions], [Messages], and [CustomMessages] sections
+   Messages in script file
+Reading [Code] section
+Parsing [Tasks] section, line 47
+Parsing [Tasks] section, line 48
+Parsing [Tasks] section, line 49
+Parsing [Tasks] section, line 50
+Parsing [Dirs] section, line 89
+Parsing [Icons] section, line 59
+Parsing [Icons] section, line 60
+Parsing [Icons] section, line 61
+Parsing [Icons] section, line 62
+Parsing [Registry] section, line 73
+Parsing [Registry] section, line 74
+Parsing [Registry] section, line 75
+Parsing [Registry] section, line 76
+Parsing [Registry] section, line 77
+Parsing [Registry] section, line 78
+Parsing [Registry] section, line 79
+Parsing [Registry] section, line 80
+Parsing [Registry] section, line 81
+Parsing [Registry] section, line 84
+Parsing [Registry] section, line 85
+Parsing [UninstallDelete] section, line 96
+Parsing [Run] section, line 92
+Parsing [Files] section, line 54
+Parsing [Files] section, line 56
+Compiling [Code] section
+Deleting Writile-Setup-1.0.0.exe from output directory
+Creating setup files
+   Verification successful
+   Updating icons (Setup.exe)
+   Compressing: D:\project\ai agent\xuexi\Writile\dist\Writile.exe
+   Compressing: D:\project\ai agent\xuexi\Writile\icon.ico
+   Compressing Setup program executable
+   Updating version info (Setup.exe)
+   Updating manifest (Setup.exe)
+
+Warning: Architecture identifier "x64" is deprecated. Substituting "x64os", but note that "x64compatible" is preferred in most cases. See the "Architecture Identifiers" topic in help file for more information.
+Warning: The [Setup] section directive "PrivilegesRequired" is set to "admin" but per-user areas (HKCU,userappdata,userdocs) are used by the script. Regardless of the version of Windows, if the installation is running in administrative install mode then you should be careful about making any per-user area changes: such changes may not achieve what you are intending. See the "UsedUserAreasWarning" topic in help file for more information.
+Warning: Line 149, Column 5: [Hint] Variable 'RESULTCODE' never used
+
+Successful compile (25.359 sec). Resulting Setup program filename is:
+D:\project\ai agent\xuexi\Writile\installer_output\Writile-Setup-1.0.0.exe
+
+============================================================
+Build SUCCESS
+============================================================
+Output files:
+Standalone:  dist\Writile.exe
+Installer:   installer_output\Writile-Setup-1.0.0.exe
+
+Installer is ready

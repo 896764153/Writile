@@ -62,11 +62,11 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [FileAssociations]
-.md; "Markdown 文件"; "Writile"; "{app}\{#MyAppExeName}", 0
-.markdown; "Markdown 文件"; "Writile"; "{app}\{#MyAppExeName}", 0
-.mdown; "Markdown 文件"; "Writile"; "{app}\{#MyAppExeName}", 0
-.mkd; "Markdown 文件"; "Writile"; "{app}\{#MyAppExeName}", 0
-.markdown; "Markdown 文件"; "Writile"; "{app}\{#MyAppExeName}", 0
+.md; "Markdown 文件"; "Writile"; """{app}\{#MyAppExeName}"" ""%1""", 0
+.markdown; "Markdown 文件"; "Writile"; """{app}\{#MyAppExeName}"" ""%1""", 0
+.mdown; "Markdown 文件"; "Writile"; """{app}\{#MyAppExeName}"" ""%1""", 0
+.mkd; "Markdown 文件"; "Writile"; """{app}\{#MyAppExeName}"" ""%1""", 0
+.markdown; "Markdown 文件"; "Writile"; """{app}\{#MyAppExeName}"" ""%1""", 0
 
 [Registry]
 ; 注册文件关联 (仅在勾选任务时)
@@ -97,9 +97,45 @@ Type: filesandordirs; Name: "{app}"
 ; 不删除用户主题目录 ({userdocs}\Writile)，保留用户自定义主题
 
 [Code]
+var
+  WorkDirPage: TInputDirWizardPage;
+
 function InitializeSetup(): Boolean;
 begin
     Result := True;
+end;
+
+procedure InitializeWizard();
+begin
+  // 在选择安装目录之后，添加"选择默认工作目录"页面
+  WorkDirPage := CreateInputDirPage(
+    wpSelectDir,
+    '选择默认工作目录',
+    'Writile 将在此目录中保存和打开 Markdown 文件',
+    '您可以稍后在程序设置中修改此目录。',
+    False, '');
+  WorkDirPage.Add('');
+  WorkDirPage.Values[0] := ExpandConstant('{userdocs}\Writile');
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ConfigFile: String;
+  ConfigContent: String;
+  WorkDir: String;
+begin
+  if CurStep = ssPostInstall then
+  begin
+    ConfigFile := ExpandConstant('{app}\config.ini');
+    WorkDir := WorkDirPage.Values[0];
+    if WorkDir = '' then
+      WorkDir := ExpandConstant('{userdocs}\Writile');
+    // 确保目录存在
+    CreateDir(WorkDir);
+    // 写入 config.ini
+    ConfigContent := '[settings]' + #13#10 + 'default_workdir=' + WorkDir + #13#10;
+    SaveStringToFile(ConfigFile, ConfigContent, False);
+  end;
 end;
 
 function InitializeUninstall(): Boolean;

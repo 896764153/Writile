@@ -70,7 +70,9 @@ if [ ! -f "$APPIMAGETOOL" ]; then
 fi
 
 if [ -f "$APPIMAGETOOL" ]; then
-    ARCH=x86_64 ./"$APPIMAGETOOL" "$APP_DIR" "$APPIMAGE_NAME" --appimage-extract-and-run 2>/dev/null || \
+    # 优先用环境变量 APPIMAGE_EXTRACT_AND_RUN=1（CI 等无 FUSE 环境）
+    # fallback 到直接运行（本地有 FUSE 时）
+    ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 ./"$APPIMAGETOOL" "$APP_DIR" "$APPIMAGE_NAME" || \
     ARCH=x86_64 ./"$APPIMAGETOOL" "$APP_DIR" "$APPIMAGE_NAME"
     echo ""
     echo "========================================="

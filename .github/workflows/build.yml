@@ -101,26 +101,33 @@ jobs:
           cp icon.png "${APP_DIR}/writile.png"
 
           # 创建 .desktop 文件 (文件名须与根目录可执行文件名一致)
-          cat > "${APP_DIR}/Writile.desktop" << 'EOF'
-          [Desktop Entry]
-          Name=Writile
-          Comment=Typora-style Markdown editor
-          Exec=Writile %f
-          Icon=writile
-          Type=Application
-          Categories=TextEditor;Office;
-          MimeType=text/markdown;text/x-markdown;
-          Terminal=false
-          StartupWMClass=Writile
-          EOF
+          cat > "${APP_DIR}/Writile.desktop" << 'DESKTOP_EOF'
+[Desktop Entry]
+Name=Writile
+Comment=Typora-style Markdown editor
+Exec=Writile %f
+Icon=writile
+Type=Application
+Categories=TextEditor;Office;
+MimeType=text/markdown;text/x-markdown;
+Terminal=false
+StartupWMClass=Writile
+DESKTOP_EOF
           cp "${APP_DIR}/Writile.desktop" "${APP_DIR}/usr/share/applications/"
 
-          # 下载 appimagetool
+          # 下载 appimagetool (固定版本更稳定)
+          echo "下载 appimagetool..."
           wget -q "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O appimagetool
           chmod +x appimagetool
 
-          # 构建 AppImage (使用 extract-and-run 规避 FUSE 在 CI 中受限)
-          ARCH=x86_64 ./appimagetool "${APP_DIR}" "dist/Writile-x86_64.AppImage" --appimage-extract-and-run
+          # GitHub Actions runner 无 FUSE，用环境变量让 appimagetool 解压自身运行
+          # 注意: APPIMAGE_EXTRACT_AND_RUN=1 必须作为环境变量，不是命令行参数
+          echo "构建 AppImage..."
+          ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 ./appimagetool "${APP_DIR}" "dist/Writile-x86_64.AppImage"
+
+          # 验证产物
+          ls -lh dist/Writile-x86_64.AppImage
+          echo "AppImage 构建成功"
 
       - name: Upload Linux artifacts
         if: runner.os == 'Linux'
@@ -130,7 +137,7 @@ jobs:
           path: |
             dist/Writile
             dist/Writile-x86_64.AppImage
-          if-no-files-found: warn
+          if-no-files-found: error
 
       # ==================== macOS ====================
       - name: Generate macOS .icns icon

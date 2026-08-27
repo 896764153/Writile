@@ -47,8 +47,12 @@ call :ECHO_LOG
 call :ECHO_LOG   Log: %LOG%
 call :ECHO_LOG
 
-REM Step 1: Generate icon
-call :ECHO_LOG [Step 1/4] Generating icon...
+REM Step 1: Ensure icon (icon.png / icon.ico 已存在则跳过生成)
+call :ECHO_LOG [Step 1/4] Checking icon...
+if exist "icon.png" if exist "icon.ico" (
+    call :ECHO_LOG           icon.png / icon.ico already exist, skipping generation.
+    goto :ICON_DONE
+)
 set "PYCMD="
 py --version >nul 2>&1 && set "PYCMD=py"
 if not defined PYCMD python --version >nul 2>&1 && set "PYCMD=python"
@@ -57,12 +61,17 @@ if not defined PYCMD (
     call :ECHO_LOG [ERROR] Python not found. Please install Python 3.9+ and add to PATH.
     exit /b 1
 )
+if not exist "gen_icon.py" (
+    call :ECHO_LOG [ERROR] icon.png / icon.ico missing and gen_icon.py not found.
+    exit /b 1
+)
 "%PYCMD%" gen_icon.py >>"%LOG%" 2>&1
 if errorlevel 1 (
     call :ECHO_LOG [ERROR] Failed to generate icon.
     call :LAST_LINES 20
     exit /b 1
 )
+:ICON_DONE
 call :ECHO_LOG
 
 REM Step 2: Build exe (delegates to build.bat with its own build.log)
@@ -150,7 +159,7 @@ if "%ISCC%"=="" (
     call :ECHO_LOG
     call :ECHO_LOG   Standalone EXE is ready: dist\Writile.exe
     call :ECHO_LOG
-    call :ECHO_LOG   To build the installer Writile-Setup-1.0.0.exe, install Inno Setup 6:
+    call :ECHO_LOG   To build the installer ^(Writile-Setup-^<version^>.exe^), install Inno Setup 6:
     call :ECHO_LOG     Option 1 - winget, recommended:
     call :ECHO_LOG       winget install JRSoftware.InnoSetup
     call :ECHO_LOG     Option 2 - chocolatey:
@@ -180,13 +189,18 @@ call :ECHO_LOG
 call :ECHO_LOG ============================================================
 call :ECHO_LOG   Build SUCCESS!
 call :ECHO_LOG ============================================================
+REM 自动识别最新生成的安装包文件名（版本号在 installer.iss 中，不在此硬编码）
+set "SETUP_EXE="
+for %%F in (installer_output\Writile-Setup-*.exe) do set "SETUP_EXE=%%~nxF"
+
 call :ECHO_LOG Output files:
 call :ECHO_LOG   Standalone:  dist\Writile.exe
-call :ECHO_LOG   Installer:   installer_output\Writile-Setup-1.0.0.exe
-call :ECHO_LOG
-
-if exist "installer_output\Writile-Setup-1.0.0.exe" (
+if defined SETUP_EXE (
+    call :ECHO_LOG   Installer:   installer_output\%SETUP_EXE%
+    call :ECHO_LOG
     call :ECHO_LOG Installer is ready!
 ) else (
+    call :ECHO_LOG   Installer:   ^(not found^)
+    call :ECHO_LOG
     call :ECHO_LOG [WARN] Installer file not found under installer_output\
 )

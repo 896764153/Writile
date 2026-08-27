@@ -2432,6 +2432,12 @@ __HIGHLIGHT_JS_PLACEHOLDER__
                 }
                 e.preventDefault();
                 splitCurrentBlock();
+                // 【修复】标题/引用换行后立即退出新块的源码卡片，避免"被框框住"
+                // 看不到换行结果。段落(p)保留源码卡片状态，让用户继续以原始文本编辑。
+                if (mdTypeSplit !== 'p' && activeBlock) {
+                    try { activeBlock.removeAttribute('data-source-mode'); } catch(e) {}
+                    activeBlock = null;
+                }
                 return;
             }
             e.preventDefault();

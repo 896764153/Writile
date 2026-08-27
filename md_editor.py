@@ -1365,7 +1365,7 @@ class MainWindow(WysiwygModeMixin, SourceModeMixin, SplitModeMixin, PreviewModeM
         """点击文件树节点，打开对应文件或触发打开对话框"""
         if not item:
             return
-        path = item.data(0, Qt.ItemDataRole.UserRole)
+        path = item.data(Qt.ItemDataRole.UserRole)
         if path == "__open_prompt__":
             self.open_folder()
         elif path and os.path.isfile(path):
@@ -1378,7 +1378,7 @@ class MainWindow(WysiwygModeMixin, SourceModeMixin, SplitModeMixin, PreviewModeM
 
         item = self.filelist_widget.itemAt(pos)
         if item:
-            path = item.data(0, Qt.ItemDataRole.UserRole)
+            path = item.data(Qt.ItemDataRole.UserRole)
             if path and os.path.isfile(path):
                 menu.addSeparator()
                 open_action = menu.addAction("打开")

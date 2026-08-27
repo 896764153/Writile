@@ -223,10 +223,13 @@ jobs:
           echo "  ✓ Writile.exe"
           ls artifacts/Writile-windows/installer_output/Writile-Setup-*.exe
           echo "=== 检查 Linux ==="
-          test -f artifacts/Writile-linux/dist/Writile-x86_64.AppImage || { echo "缺少 Linux AppImage!"; exit 1; }
+          # 注意：Linux 上传路径都在 dist/ 下，upload-artifact 会以公共父目录(dist/)
+          # 为根保存，下载后没有 dist/ 前缀
+          test -f artifacts/Writile-linux/Writile-x86_64.AppImage || { echo "缺少 Linux AppImage!"; exit 1; }
           echo "  ✓ AppImage"
           echo "=== 检查 macOS ==="
-          test -f artifacts/Writile-macos/dist/Writile-macOS.dmg || { echo "缺少 macOS DMG!"; exit 1; }
+          # 同上：macOS 产物也都在 dist/ 下，下载后无 dist/ 前缀
+          test -f artifacts/Writile-macos/Writile-macOS.dmg || { echo "缺少 macOS DMG!"; exit 1; }
           echo "  ✓ DMG"
           echo ""
           echo "所有平台产物已就绪!"
@@ -237,10 +240,10 @@ jobs:
           # Windows
           cp artifacts/Writile-windows/dist/Writile.exe release/Writile-Windows-x64.exe
           cp artifacts/Writile-windows/installer_output/Writile-Setup-*.exe release/
-          # Linux
-          cp artifacts/Writile-linux/dist/Writile-x86_64.AppImage release/Writile-Linux-x86_64.AppImage
-          # macOS
-          cp artifacts/Writile-macos/dist/Writile-macOS.dmg release/Writile-macOS.dmg
+          # Linux（下载后无 dist/ 前缀，见 Verify 步骤说明）
+          cp artifacts/Writile-linux/Writile-x86_64.AppImage release/Writile-Linux-x86_64.AppImage
+          # macOS（同上）
+          cp artifacts/Writile-macos/Writile-macOS.dmg release/Writile-macOS.dmg
           echo "=== Release 产物 ==="
           ls -lh release/
 

@@ -75,9 +75,11 @@ if errorlevel 1 (
 call :ECHO_LOG
 
 REM Step 2: Build exe (delegates to build.bat with its own build.log)
+REM 用 %~dp0 限定路径：部分机器启用了 NoDefaultCurrentDirectoryInExePath
+REM 安全策略，裸文件名调用会被拒绝
 call :ECHO_LOG [Step 2/4] Building Writile.exe
 call :ECHO_LOG ------------------------------------------------------------
-call build.bat >>"%LOG%" 2>&1
+call "%~dp0build.bat" >>"%LOG%" 2>&1
 set "RC=%ERRORLEVEL%"
 REM Echo build.bat summary lines (last 10) to console so user sees progress
 call :LAST_LINES 10 "%~dp0build.log"

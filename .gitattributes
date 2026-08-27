@@ -1,2 +1,6 @@
 *.exe filter=lfs diff=lfs merge=lfs -text
 *.pkg filter=lfs diff=lfs merge=lfs -text
+
+# Windows 批处理必须保持 CRLF 行尾，否则 cmd.exe 无法解析
+*.bat text eol=crlf
+*.cmd text eol=crlf

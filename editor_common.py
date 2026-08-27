@@ -2432,9 +2432,10 @@ __HIGHLIGHT_JS_PLACEHOLDER__
                 }
                 e.preventDefault();
                 splitCurrentBlock();
-                // 【修复】标题/引用换行后立即退出新块的源码卡片，避免"被框框住"
-                // 看不到换行结果。段落(p)保留源码卡片状态，让用户继续以原始文本编辑。
-                if (mdTypeSplit !== 'p' && activeBlock) {
+                // 【修复】换行后若新块为空（光标在原块末尾），退出源码卡片，
+                // 避免反复创建新空源卡片导致"被框框住 / 按回车看不到结果"。
+                // 新块仍有内容（光标在原块中间）时，保留源卡片以便继续以原始文本编辑。
+                if (activeBlock && !(activeBlock.textContent || '').replace(/​/g, '').trim()) {
                     try { activeBlock.removeAttribute('data-source-mode'); } catch(e) {}
                     activeBlock = null;
                 }

@@ -122,9 +122,10 @@ jobs:
           } > "${APP_DIR}/Writile.desktop"
           cp "${APP_DIR}/Writile.desktop" "${APP_DIR}/usr/share/applications/"
 
-          # 下载 appimagetool (固定版本更稳定)
+          # 下载 appimagetool（主源失败时换备用仓库，各重试 3 次）
           echo "下载 appimagetool..."
-          wget -q "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O appimagetool
+          wget -q --tries=3 "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage" -O appimagetool \
+            || wget -q --tries=3 "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O appimagetool
           chmod +x appimagetool
 
           # GitHub Actions runner 无 FUSE，用环境变量让 appimagetool 解压自身运行
@@ -132,8 +133,11 @@ jobs:
           echo "构建 AppImage..."
           ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 ./appimagetool "${APP_DIR}" "dist/Writile-x86_64.AppImage"
 
-          # 验证产物
-          ls -lh dist/Writile-x86_64.AppImage
+          # 验证产物（打印完整清单，方便排查上传缺件问题）
+          echo "=== dist 产物清单 ==="
+          ls -la dist/
+          test -f dist/Writile || { echo "缺少 dist/Writile!"; exit 1; }
+          test -f dist/Writile-x86_64.AppImage || { echo "缺少 AppImage!"; exit 1; }
           echo "AppImage 构建成功"
 
       - name: Upload Linux artifacts
@@ -211,6 +215,9 @@ jobs:
       - name: Verify all artifacts exist
         run: |
           set -e
+          echo "=== 已下载的产物清单 ==="
+          find artifacts -type f | sort || true
+          echo ""
           echo "=== 检查 Windows ==="
           test -f artifacts/Writile-windows/dist/Writile.exe || { echo "缺少 Windows exe!"; exit 1; }
           echo "  ✓ Writile.exe"

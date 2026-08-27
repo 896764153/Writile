@@ -51,9 +51,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 5. 生成图标
+      # 5. 生成图标（仓库已内置 icon.png / icon.ico 时跳过，避免依赖生成脚本）
       - name: Generate icon
-        run: python gen_icon.py
+        shell: bash
+        run: |
+          if [ -f icon.png ] && [ -f icon.ico ]; then
+            echo "icon.png / icon.ico 已存在，跳过生成"
+          else
+            python gen_icon.py
+          fi
 
       # ==================== Windows ====================
       - name: Build Windows (single exe)

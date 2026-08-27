@@ -18,6 +18,13 @@ if os.path.isdir(themes_dir):
         if fname.endswith('.json'):
             datas.append((os.path.join(themes_dir, fname), 'themes'))
 
+# lib/ 运行时资源：highlight.min.js（代码高亮，_load_highlight_js_lib 通过
+# get_resource_path 从 _MEIPASS 读取）、codemirror-bundle.js（若存在）。
+# 不打包进去会导致打包版代码高亮失效。
+lib_dir = os.path.join(SPECPATH, 'lib')
+if os.path.isdir(lib_dir):
+    datas.append((os.path.join(lib_dir, '*'), 'lib'))
+
 a = Analysis(
     ['md_editor.py'],
     pathex=[],

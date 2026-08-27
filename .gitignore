@@ -1,4 +1,16 @@
-installer_output/Writile-Setup-1.0.0.exe
-dist/Writile.exe
-build/*
-build/*/*
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 构建产物
+build/
+dist/
+installer_output/
+Writile.spec
+
+# 日志
+*.log
+
+# 调试/临时文件
+debug*.md
+pending_changes.diff

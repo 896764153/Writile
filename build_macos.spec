@@ -17,6 +17,11 @@ if os.path.isdir(themes_dir):
         if fname.endswith('.json'):
             datas.append((os.path.join(themes_dir, fname), 'themes'))
 
+# lib/ 运行时资源（highlight.min.js 代码高亮等），缺失会导致打包版高亮失效
+lib_dir = os.path.join(SPECPATH, 'lib')
+if os.path.isdir(lib_dir):
+    datas.append((os.path.join(lib_dir, '*'), 'lib'))
+
 a = Analysis(
     ['md_editor.py'],
     pathex=[],

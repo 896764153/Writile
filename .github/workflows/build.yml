@@ -107,18 +107,19 @@ jobs:
           cp icon.png "${APP_DIR}/writile.png"
 
           # 创建 .desktop 文件 (文件名须与根目录可执行文件名一致)
-          cat > "${APP_DIR}/Writile.desktop" << 'DESKTOP_EOF'
-[Desktop Entry]
-Name=Writile
-Comment=Typora-style Markdown editor
-Exec=Writile %f
-Icon=writile
-Type=Application
-Categories=TextEditor;Office;
-MimeType=text/markdown;text/x-markdown;
-Terminal=false
-StartupWMClass=Writile
-DESKTOP_EOF
+          # 注意：heredoc 内容顶格写会破坏 YAML 块标量解析，改用逐行 echo
+          {
+            echo '[Desktop Entry]'
+            echo 'Name=Writile'
+            echo 'Comment=Typora-style Markdown editor'
+            echo 'Exec=Writile %f'
+            echo 'Icon=writile'
+            echo 'Type=Application'
+            echo 'Categories=TextEditor;Office;'
+            echo 'MimeType=text/markdown;text/x-markdown;'
+            echo 'Terminal=false'
+            echo 'StartupWMClass=Writile'
+          } > "${APP_DIR}/Writile.desktop"
           cp "${APP_DIR}/Writile.desktop" "${APP_DIR}/usr/share/applications/"
 
           # 下载 appimagetool (固定版本更稳定)

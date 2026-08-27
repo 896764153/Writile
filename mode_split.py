@@ -9,6 +9,68 @@ from PyQt6.QtWidgets import QSplitter
 from editor_common import EditorWidget
 
 
+# 分栏滚动同步注入脚本（每个面板各注入一次，__ROLE__ 替换为 'src'/'prev'）。
+# 要点：
+#   - el.style.scrollBehavior = 'auto'：覆盖全局 CSS 的 smooth，否则程序化
+#     设置 scrollTop 会变成平滑动画，动画期间不断发 scroll 事件造成反馈回环；
+#   - applying 回声抑制：被 Python 程序化滚动的一方忽略自身随之产生的
+#     scroll 事件，避免「滚过去又被弹回来」；
+#   - requestAnimationFrame 节流：高频滚动事件每帧最多上报一次。
+_SPLIT_SCROLL_SYNC_JS = r"""
+(function() {
+    var el = document.getElementById('editor');
+    if (!el || el._writileScrollSync) return;
+    el._writileScrollSync = true;
+    el.style.scrollBehavior = 'auto';
+    var role = '__ROLE__';
+    var applying = false;
+    var applyTimer = null;
+    var lastPct = -1;
+    var pendingPct = null;
+    var rafScheduled = false;
+
+    // 接收侧入口：Python 只把百分比写给「非发起方」面板
+    window._writileSyncApply = function(pct) {
+        var sh = el.scrollHeight - el.clientHeight;
+        if (sh <= 0) return;
+        var target = Math.round(pct * sh);
+        if (Math.abs(el.scrollTop - target) <= 1) return;
+        applying = true;
+        if (applyTimer) clearTimeout(applyTimer);
+        // 连续同步期间持续抑制自身回声事件
+        applyTimer = setTimeout(function() { applying = false; }, 150);
+        el.scrollTop = target;
+        lastPct = pct;
+    };
+
+    function send() {
+        rafScheduled = false;
+        if (pendingPct === null) return;
+        var pct = pendingPct;
+        pendingPct = null;
+        lastPct = pct;
+        if (window.bridge && window.bridge.onScrollSync) {
+            try { window.bridge.onScrollSync(pct, role); } catch(e) {}
+        }
+    }
+
+    el.addEventListener('scroll', function() {
+        // 程序化同步引发的回声：忽略，否则会形成来回反弹
+        if (applying) return;
+        var sh = el.scrollHeight - el.clientHeight;
+        if (sh <= 0) return;
+        var pct = el.scrollTop / sh;
+        if (Math.abs(pct - lastPct) < 0.002) return;
+        pendingPct = pct;
+        if (!rafScheduled) {
+            rafScheduled = true;
+            requestAnimationFrame(send);
+        }
+    }, { passive: true });
+})();
+"""
+
+
 class SplitModeMixin:
     """分栏模式 Mixin：左边源码编辑器，右边只读预览
 
@@ -77,8 +139,8 @@ class SplitModeMixin:
                 if self.centralWidget() is self.editor:
                     self.takeCentralWidget()
                 self.editor.setParent(None)
-                # 接入滚动同步回调（如果之前没接入）
-                self.editor.scroll_sync_callback = self._on_split_scroll_sync
+                # 接入滚动同步回调（必须同时更新桥接对象，否则滚动事件传不到 Python）
+                self.editor.set_scroll_sync_callback(self._on_split_scroll_sync)
                 # 把左侧修改信号接到主窗口
                 try:
                     self.editor._bridge.contentChanged.connect(self._on_split_source_changed)
@@ -294,68 +356,71 @@ class SplitModeMixin:
         QTimer.singleShot(50, _check)
 
     def _setup_split_scroll_sync(self):
-        """为分栏模式配置滚动同步：在两个 WebEngine 视图加载完后建立双向滚动监听。
+        """为分栏模式配置滚动同步：单向传播 + 回声抑制。
 
-        设计上选择「按内容比例」同步而不是「绝对像素」同步，因为：
-          - 左侧是纯文本（渲染后高度与文本量成正比）
-          - 右侧是预览 HTML（按文档结构渲染）
-          - 但同一份 markdown 文本在两种视图中的高度比例基本一致（1:1）
-          - 因此以「滚动百分比 = scrollTop / scrollHeight」在两侧间传递即可
+        旧实现的缺陷（表现为滚动不灵敏、不跟手、有时往回收）：
+          1. Python 回写时的防回环条件写死为 splitSyncSuspend !== 'src'，
+             当预览面板发起滚动时回写会打到预览面板自己，与用户操作对抗；
+          2. #editor 的 CSS scroll-behavior: smooth 使程序化 scrollTop 赋值
+             变成平滑动画，动画期间持续产生 scroll 事件，形成反馈风暴；
+          3. Python 不区分发起方，对两个面板无差别回写。
+
+        新设计：
+          - 面板滚动事件携带 role 标识（'src'/'prev'）上报，Python 只写另一侧；
+          - 接收方面板用 applying 标志抑制自身被程序化滚动引发的回声事件；
+          - 分栏面板内禁用 smooth 滚动，程序化同步即时精确生效；
+          - 发起侧用 requestAnimationFrame 节流，每帧最多上报一次。
+
+        同步采用「滚动百分比 = scrollTop / (scrollHeight - clientHeight)」，
+        同一份文档在源码/预览两种视图中的高度比例基本一致。
         """
         if not (hasattr(self, 'source_editor') and self.source_editor and
                 hasattr(self, 'preview_view') and self.preview_view):
             return
 
-        def _setup():
+        def _inject(ed, role):
             try:
-                # 在源面板上监听滚动：把百分比同步到预览面板
-                self.source_editor.run_js("""
-                    (function() {
-                        if (window._splitScrollSrc) return;
-                        window._splitScrollSrc = true;
-                        var src = document.getElementById('editor');
-                        var lastPct = -1;
-                        src.addEventListener('scroll', function() {
-                            var sh = src.scrollHeight - src.clientHeight;
-                            if (sh <= 0) return;
-                            var pct = src.scrollTop / sh;
-                            if (Math.abs(pct - lastPct) < 0.005) return;
-                            lastPct = pct;
-                            if (window.splitSyncSuspend) return;
-                            window.splitSyncSuspend = 'src';
-                            if (window.bridge && window.bridge.onScrollSync) {
-                                window.bridge.onScrollSync(pct);
-                            }
-                            setTimeout(function(){ window.splitSyncSuspend = false; }, 60);
-                        }, { passive: true });
-                    })();
-                """)
-                # 在预览面板上监听滚动：把百分比同步到源面板
-                self.preview_view.run_js("""
-                    (function() {
-                        if (window._splitScrollPrev) return;
-                        window._splitScrollPrev = true;
-                        var prev = document.getElementById('editor');
-                        var lastPct = -1;
-                        prev.addEventListener('scroll', function() {
-                            var sh = prev.scrollHeight - prev.clientHeight;
-                            if (sh <= 0) return;
-                            var pct = prev.scrollTop / sh;
-                            if (Math.abs(pct - lastPct) < 0.005) return;
-                            lastPct = pct;
-                            if (window.splitSyncSuspend) return;
-                            window.splitSyncSuspend = 'prev';
-                            if (window.bridge && window.bridge.onScrollSync) {
-                                window.bridge.onScrollSync(pct);
-                            }
-                            setTimeout(function(){ window.splitSyncSuspend = false; }, 60);
-                        }, { passive: true });
-                    })();
-                """)
-                # 在源面板上加键盘 Ctrl+滚轮快捷缩放（可选）
+                ed.run_js(_SPLIT_SCROLL_SYNC_JS.replace('__ROLE__', role))
             except Exception as e:
-                print(f"setup scroll sync: {e}")
+                print(f"setup scroll sync ({role}): {e}")
+
+        def _setup():
+            """注入同步脚本；页面尚未就绪时每 200ms 重试（最多约 4 秒）。
+            注入脚本自带幂等守卫（_writileScrollSync），重复注入无副作用。"""
+            if getattr(self, '_destroyed', False):
+                return
+            if getattr(self, '_editor_mode', None) != 'split':
+                return
+            src = getattr(self, 'source_editor', None)
+            prv = getattr(self, 'preview_view', None)
+            if not src or not prv:
+                return
+            if getattr(src, '_destroyed', False) or getattr(prv, '_destroyed', False):
+                return
+            _inject(src, 'src')
+            _inject(prv, 'prev')
+            self._scroll_sync_attempts = getattr(self, '_scroll_sync_attempts', 0) + 1
+
+            def _check(ok):
+                try:
+                    if ok or getattr(self, '_scroll_sync_attempts', 0) >= 20:
+                        return
+                except Exception:
+                    return
+                QTimer.singleShot(200, _setup)
+
+            try:
+                prv.web_view.page().runJavaScript(
+                    "!!(document.getElementById('editor') && "
+                    "document.getElementById('editor')._writileScrollSync)",
+                    _check
+                )
+            except Exception:
+                if getattr(self, '_scroll_sync_attempts', 0) < 20:
+                    QTimer.singleShot(200, _setup)
+
         # 等面板加载完成后再注入脚本
+        self._scroll_sync_attempts = 0
         QTimer.singleShot(200, _setup)
 
     def _on_split_source_changed(self):
@@ -684,30 +749,31 @@ class SplitModeMixin:
             except (AttributeError, RuntimeError):
                 pass
 
-    def _on_split_scroll_sync(self, pct):
-        """分栏模式滚动同步桥接：JS 端把百分比传过来，Python 端按角色把
-        另一侧的滚动位置同步到同一百分比。"""
+    def _on_split_scroll_sync(self, pct, role=''):
+        """分栏模式滚动同步桥接：把百分比只写给发起方的另一侧面板。
+
+        role='src'  → 源面板发起，写预览面板；
+        role='prev' → 预览面板发起，写源面板。
+        接收方通过 _writileSyncApply 设置 scrollTop 并抑制回声事件，
+        因此不会反弹回发起方，用户滚动始终跟手。
+        """
         if not (hasattr(self, 'source_editor') and self.source_editor and
                 hasattr(self, 'preview_view') and self.preview_view):
             return
         try:
-            # Python 端无法直接获取在哪个面板产生的滚动（只有一个回调），
-            # 我们用「谁当前可见且最近被聚焦」来推断。
-            # 简化做法：两边都同步，但 JS 端有 splitSyncSuspend 防回环，时间窗是 60ms；
-            # 第二个事件到来时，src-preview 都已经同步好了。
             pct = max(0.0, min(1.0, float(pct)))
-            for ed in (self.source_editor, self.preview_view):
-                try:
-                    ed.web_view.page().runJavaScript(
-                        f"if (window.splitSyncSuspend !== 'src') {{"
-                        f"  var el = document.getElementById('editor');"
-                        f"  if (el) {{"
-                        f"    var sh = el.scrollHeight - el.clientHeight;"
-                        f"    if (sh > 0) {{ el.scrollTop = Math.round({pct} * sh); }}"
-                        f"  }}"
-                        f"}}"
-                    )
-                except Exception:
-                    pass
+        except Exception:
+            return
+        if role == 'src':
+            target = self.preview_view
+        elif role == 'prev':
+            target = self.source_editor
+        else:
+            return
+        try:
+            if not getattr(target, '_destroyed', False):
+                target.web_view.page().runJavaScript(
+                    f"window._writileSyncApply && window._writileSyncApply({pct});"
+                )
         except Exception as e:
             print(f"scroll sync: {e}")

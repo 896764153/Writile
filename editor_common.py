@@ -279,7 +279,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
                  'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
     font-size: 16px;
-    line-height: 1.75;
+    line-height: 1.7;
     color: var(--fg);
     background: var(--bg);
     -webkit-font-smoothing: antialiased;
@@ -289,7 +289,7 @@ body {
 #editor {
     max-width: 820px;
     margin: 0 auto;
-    padding: 48px 64px 200px 64px;
+    padding: 32px 48px 140px 48px;
     min-height: 100%;
     outline: none;
     overflow-y: auto;
@@ -333,15 +333,15 @@ body {
 }
 
 /* 标题 */
-h1 { font-size: 2em; font-weight: 700; border-bottom: 1px solid var(--border-light); padding-bottom: .4em; margin: 1.2em 0 .6em; letter-spacing: -0.01em; }
-h2 { font-size: 1.5em; font-weight: 700; border-bottom: 1px solid var(--border-light); padding-bottom: .3em; margin: 1.2em 0 .5em; letter-spacing: -0.01em; }
-h3 { font-size: 1.25em; font-weight: 600; margin: 1em 0 .4em; }
-h4 { font-size: 1em; font-weight: 600; margin: 1em 0 .4em; }
-h5 { font-size: .875em; font-weight: 600; margin: 1em 0 .4em; color: var(--muted); }
-h6 { font-size: .85em; font-weight: 600; margin: 1em 0 .4em; color: var(--muted); }
+h1 { font-size: 2em; font-weight: 700; border-bottom: 1px solid var(--border-light); padding-bottom: .4em; margin: 1em 0 .5em; letter-spacing: -0.01em; }
+h2 { font-size: 1.5em; font-weight: 700; border-bottom: 1px solid var(--border-light); padding-bottom: .3em; margin: 1em 0 .4em; letter-spacing: -0.01em; }
+h3 { font-size: 1.25em; font-weight: 600; margin: .9em 0 .4em; }
+h4 { font-size: 1em; font-weight: 600; margin: .9em 0 .35em; }
+h5 { font-size: .875em; font-weight: 600; margin: .9em 0 .35em; color: var(--muted); }
+h6 { font-size: .85em; font-weight: 600; margin: .9em 0 .35em; color: var(--muted); }
 
-p { margin: 0 0 16px 0; }
-.empty-line { margin: 0 0 16px 0; min-height: 1em; }
+p { margin: 0 0 12px 0; }
+.empty-line { margin: 0 0 12px 0; min-height: 1em; }
 a { color: var(--link); text-decoration: none; transition: opacity 0.15s; }
 a:hover { text-decoration: underline; opacity: 0.85; }
 strong { font-weight: 600; }
@@ -349,17 +349,17 @@ em { font-style: italic; }
 del { text-decoration: line-through; color: var(--muted); }
 
 blockquote {
-    padding: 12px 20px;
+    padding: 10px 16px;
     color: var(--muted);
     border-left: 4px solid var(--accent);
     background: var(--quote-bg);
     border-radius: 0 6px 6px 0;
-    margin: 20px 0;
+    margin: 14px 0;
 }
 
-ul, ol { padding-left: 2em; margin: 16px 0; }
-li { margin: 6px 0; line-height: 1.65; }
-li > ul, li > ol { margin: 6px 0; }
+ul, ol { padding-left: 2em; margin: 10px 0; }
+li { margin: 3px 0; line-height: 1.65; }
+li > ul, li > ol { margin: 3px 0; }
 
 code {
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
@@ -376,17 +376,17 @@ pre {
     font-size: 0.88em;
     background: var(--code-bg);
     border-radius: 10px;
-    padding: 20px 24px;
+    padding: 16px 18px;
     overflow: auto;
     line-height: 1.55;
-    margin: 20px 0;
+    margin: 14px 0;
     border: 1px solid var(--border-light);
 }
 pre code { background: none; padding: 0; font-size: 100%; border: none; }
 
 table {
     border-collapse: collapse;
-    margin: 20px 0;
+    margin: 14px 0;
     width: 100%;
     font-size: 0.95em;
     border-radius: 8px;
@@ -404,7 +404,7 @@ tr:hover { background: var(--accent-light); }
 
 img { max-width: 100%; border-radius: 6px; cursor: pointer; }
 img:hover { outline: 2px solid var(--accent); outline-offset: 2px; }
-hr { border: none; border-top: 1px solid var(--border-light); margin: 32px 0; }
+hr { border: none; border-top: 1px solid var(--border-light); margin: 20px 0; }
 mark { background: #fff3a0; padding: 1px 4px; border-radius: 3px; }
 
 kbd {
@@ -3756,12 +3756,12 @@ class EditorBridge(QObject):
             except Exception:
                 pass
 
-    @pyqtSlot(float)
-    def onScrollSync(self, pct):
-        """分栏模式滚动同步：JS 端把滚动百分比传过来"""
+    @pyqtSlot(float, str)
+    def onScrollSync(self, pct, role):
+        """分栏模式滚动同步：JS 端把滚动百分比与发起方面板（'src'/'prev'）传过来"""
         if self._scroll_sync_callback and pct is not None:
             try:
-                self._scroll_sync_callback(float(pct))
+                self._scroll_sync_callback(float(pct), str(role))
             except Exception:
                 pass
 
@@ -3991,6 +3991,19 @@ class EditorWidget(QWidget):
             self.web_view.page().runJavaScript(code)
         except RuntimeError:
             pass
+        except Exception:
+            pass
+
+    def set_scroll_sync_callback(self, callback):
+        """重绑定分栏滚动同步回调（同时更新桥接对象持有的引用）。
+
+        【修复】旧代码直接给 widget 赋 `scroll_sync_callback` 属性，
+        但 EditorBridge 只认构造时传入的回调，导致复用主编辑器作分栏
+        左栏时滚动事件根本传不到 Python，同步失效。
+        """
+        self._scroll_sync_callback = callback
+        try:
+            self._bridge._scroll_sync_callback = callback
         except Exception:
             pass
 
